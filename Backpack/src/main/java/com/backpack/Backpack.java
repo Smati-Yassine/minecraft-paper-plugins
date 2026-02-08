@@ -8,9 +8,6 @@ public class Backpack extends JavaPlugin {
     public void onEnable() {
         getLogger().info("Backpack plugin has been enabled!");
         
-        // Register commands
-        getCommand("backpack").setExecutor(new BackpackCommand(this));
-        
         // Register events
         getServer().getPluginManager().registerEvents(new BackpackListener(this), this);
         
