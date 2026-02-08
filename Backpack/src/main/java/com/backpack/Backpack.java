@@ -13,6 +13,9 @@ public class Backpack extends JavaPlugin {
         // Initialize backpack manager
         backpackManager = new BackpackManager(this);
         
+        // Register commands
+        getCommand("backpack").setExecutor(new BackpackCommand(this));
+        
         // Register events
         getServer().getPluginManager().registerEvents(new BackpackListener(this), this);
         

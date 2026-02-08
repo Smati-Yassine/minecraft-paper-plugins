@@ -24,14 +24,33 @@ public class BackpackCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        // Check if admin is trying to view another player's backpack
+        if (args.length > 0) {
+            if (!player.hasPermission("backpack.admin")) {
+                player.sendMessage("You don't have permission to view other players' backpacks!");
+                return true;
+            }
+
+            Player target = Bukkit.getPlayer(args[0]);
+            if (target == null) {
+                player.sendMessage("Player not found!");
+                return true;
+            }
+
+            // Open target player's backpack
+            Inventory backpack = plugin.getBackpackManager().getBackpack(target);
+            player.openInventory(backpack);
+            player.sendMessage("Opening " + target.getName() + "'s backpack...");
+            return true;
+        }
+
+        // Open own backpack
         if (!player.hasPermission("backpack.use")) {
             player.sendMessage("You don't have permission to use backpacks!");
             return true;
         }
 
-        // Create a backpack inventory (27 slots = 3 rows)
-        Inventory backpack = Bukkit.createInventory(null, 27, "Backpack");
-        
+        Inventory backpack = plugin.getBackpackManager().getBackpack(player);
         player.openInventory(backpack);
         return true;
     }

@@ -1,6 +1,6 @@
 # Backpack Plugin Configuration
 
 backpack:
-  size: 27  # Inventory size (9, 18, 27, 36, 45, 54)
+  size: 54  # Inventory size (9, 18, 27, 36, 45, 54)
   save-on-close: true
   persistent: true
