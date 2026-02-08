@@ -1,10 +1,10 @@
 package com.backpack;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.Inventory;
 
@@ -21,8 +21,6 @@ public class BackpackListener implements Listener {
         Player player = event.getPlayer();
         
         // Check if player is sneaking (shift) and pressing F (swap hands key)
-        // This is the closest we can get to detecting a key press in Bukkit
-        // Players will need to press Shift+F to open backpack
         if (player.isSneaking()) {
             event.setCancelled(true);
             
@@ -31,8 +29,8 @@ public class BackpackListener implements Listener {
                 return;
             }
             
-            // Create a backpack inventory (27 slots = 3 rows)
-            Inventory backpack = Bukkit.createInventory(null, 27, "Backpack");
+            // Get or create backpack from manager
+            Inventory backpack = plugin.getBackpackManager().getBackpack(player);
             player.openInventory(backpack);
         }
     }
@@ -40,8 +38,23 @@ public class BackpackListener implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         if (event.getView().getTitle().equals("Backpack")) {
-            // Handle backpack close event
-            // You can save inventory contents here
+            Player player = (Player) event.getPlayer();
+            Inventory backpack = event.getInventory();
+            
+            // Save backpack contents
+            plugin.getBackpackManager().saveBackpack(player, backpack);
         }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        Inventory backpack = plugin.getBackpackManager().getBackpack(player);
+        
+        // Save backpack on logout
+        plugin.getBackpackManager().saveBackpack(player, backpack);
+        
+        // Remove from cache to free memory
+        plugin.getBackpackManager().removeFromCache(player.getUniqueId());
     }
 }
